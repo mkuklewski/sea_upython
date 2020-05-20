@@ -23,66 +23,39 @@
 --   thread on alt.sources Usenet group.
 --
 --  We assume that SPI works in 8-bit mode
---  The two MSB bits in the first byte encode the operation.
+--  The two MSB bits in the fifth byte encode the operation.
 --  1,0 - Sending address for READ operation (immediately triggers READ on WB)
 --  1,1 - Sending address for WRITE operation (next DATA transfer triggers the
 --        WRITE operation)
 --  0,1 - Sending data for WRITE operation
 --  0,0 - Reading status and data after READ operation, reading status after
 --        WRITE operation
+--  The operation is triggered after those bits are transmitted.
+--  That ensures that a few SCK pulses are generated (needed by the CDC block)
+--  The WB controller operates in the WB clock domain, and the SPI
+--  operates in the SPI clock domain.
+--  The SPI clock is not continuous. That could create problems for
+--  CDC blocks, which have been worked around by presence of a few "dummy"
+--  bits after the command.
 --
---  The WB controller operates in the WB clock domain.
---  The SPI operates in the SPI clock domain.
---  The SPI clock is not continuous. That may create problems for
---  CDC blocks.
---  In particular, when we start the SPI operation, the SPI state machine
---  counts the cycles. After it counts 5 bytes, it transfers the received
---  record to the controller and transfers the response from the controller
---  How we can be sure, that those data are stable?
---
---  Maybe we should send data/address first and only the command at the end?
---  Then we have additional clock pulses, that may be added to transfer
---  the data between the clock domains?
---
---  However, in principle the command does not need to be transmitted
---  to the WB clock domain!
---  So the operation may be done as follows:
---  1. SPI state machine receives the command byte. After the last byte
---     is received, the complete command is transferred to the WB clock
---     domain.
---  2. What about the reception of data?
---     We should have a little time to decide if we have a chance to
---     receive the data.
-
---  Disappearance of the JTAG clock should not block its operation
---  and the whole WB bus (that maybe also controlled by other hosts!).
---  Therefore, implementation of the whole WB controller with JTAG clock
---  and using my WB-CDC may be not the best idea!
---  We know, that there will be at least two jt_TCK clock pulses before
---  the capture (see Ug835, decription of scan_dr_hw_jtag).
---  IDLE->DRSELECT->DRCAPTURE
---  Therefore we may use CDC requiring two jt_TCK pulses.
---  It is done with two pairs of signals: s_start:s_start_sync and
---    s_done_sync:s_done_async
---  The "ping-pong" approach is used so the new command is triggered when
---  s_start /= s_done_sync. The command is completed (successfully or not)
---  when s_start = s_done.
---  Please note, that you need to specify the appropriate timing constraints
---  for signals passed between JTAG and WB clock domains:
---  s_din, wb_status, s_address, s_data, s_mode.
---  You may also need to increase the number of synchronization stages.
+--  Similarly, when receiving responses, the status is transmitted in bits
+--  4 and 3 of the first byte. Bits 7, 6 and 5 are always sent as '0'.
+--  However during their transmission a few SCK pulses are generated, which
+--  drive the receiving part of the CDC block.
+--  Bit 4 informs, that the WB operation is finished.
+--  Bit 3 is set if the operation was successful.
 --
 --  The address remains unchanged after the operation. That makes implementation
 --  of RMW operations easy. You may do READ (which sets the address),
 --  then calculate the new value and issue WRITE (address was already set).
 
 -------------------------------------------------------------------------------
--- Copyright (c) 2018 Wojciech M. Zabolotny (wzab<at>ise.pw.edu.pl or
+-- Copyright (c) 2020 Wojciech M. Zabolotny (wzab<at>ise.pw.edu.pl or
 --  wzab01<at>gmail.com )
 -------------------------------------------------------------------------------
 -- Revisions  :
 -- Date        Version  Author  Description
--- 2018-12-20  1.0      wzab      Created
+-- 2020-05-20  1.0      wzab      Created
 -------------------------------------------------------------------------------
 --
 --  This program is PUBLIC DOMAIN or Creative Commons CC0 code
