@@ -1,0 +1,8 @@
+Copy:
+  agwb.py
+  agwb_MAIN.py
+  agwb_MAIN_const.py 
+from AGWB directories
+
+Copy main.bit from Vivado impl_1 directory
+

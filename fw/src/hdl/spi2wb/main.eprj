@@ -1,0 +1,4 @@
+vhdl work spi2wb.vhd
+xdc spi2wb.tcl
+prop "file_type" "TCL"
+prop "scoped_to_ref" "spi2wb"
