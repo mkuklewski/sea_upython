@@ -1,4 +1,4 @@
-set eprj_proj_name "sea_wb_ag"
+set eprj_proj_name "sea_wb_gem"
 set eprj_def_root "src/main.eprj"
 set eprj_top_entity "main"
 set eprj_board_part ""
@@ -11,5 +11,5 @@ set eprj_synth_flow "Vivado Synthesis 2019"
 set eprj_synth_strategy "Flow_PerfOptimized_high"
 set eprj_impl_flow "Vivado Implementation 2017"
 set eprj_impl_strategy "Performance_Retiming"
-set eprj_vivado_version "2019.1"
+set eprj_vivado_version "2019.2"
 set eprj_vivado_version_allow_upgrade true

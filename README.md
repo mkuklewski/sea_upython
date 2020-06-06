@@ -6,7 +6,7 @@ The directory "fw" contains sources of the FPGA firmware. You should first run t
 then the "generate.sh" script generates the code providing access to the complex tree of blocks and registers
 created in the FPGA. Finally the "build.sh" script builds the FPGA configuration bitstream using the Vivado tool (it must be in path!).
 
-I have installed the MicroPython to the SEA board with the following procedure:
+I have installed the MicroPython to the SEA board with the following procedure(for Windows user - change "/dev/ttyUSB1" to proper "COM" port):
 
     wget https://micropython.org/resources/firmware/esp32-idf3-20191220-v1.12.bin
     esptool.py --chip esp32 --port /dev/ttyUSB1 erase_flash
@@ -17,10 +17,6 @@ I have done it using the ampy tool:
 
     ampy -d 3 -p /dev/ttyUSB1 put boot.py /boot.py
     ampy -d 3 -p /dev/ttyUSB1 put main.py /main.py
-    
- Or for Windows users:   
-    ampy -d 3 -p COM4 put boot.py /boot.py
-    ampy -d 3 -p COM4 put main.py /main.py
 
 The files from "Python/sd" directory should be copied to the SD card.
 You should also copy to the main directory on the SD card the following files (they will be created after the successful compilation):
@@ -28,6 +24,7 @@ You should also copy to the main directory on the SD card the following files (t
 *  /fw/src/created/raw/agwb_MAIN.py 
 *  /fw/src/created/raw/agwb_MAIN_const.py 
 *  /fw/sea_wb_ag/sea_wb_ag.runs/impl_1/main.bit
+*  /modules/addr_gen_wb/python-support/agwb.py
 
 If you place the SD into the socket and switch on the SEA board, you should see the following:
 
