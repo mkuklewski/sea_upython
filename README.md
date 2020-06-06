@@ -17,6 +17,10 @@ I have done it using the ampy tool:
 
     ampy -d 3 -p /dev/ttyUSB1 put boot.py /boot.py
     ampy -d 3 -p /dev/ttyUSB1 put main.py /main.py
+    
+ Or for Windows users:   
+    ampy -d 3 -p COM4 put boot.py /boot.py
+    ampy -d 3 -p COM4 put main.py /main.py
 
 The files from "Python/sd" directory should be copied to the SD card.
 You should also copy to the main directory on the SD card the following files (they will be created after the successful compilation):
