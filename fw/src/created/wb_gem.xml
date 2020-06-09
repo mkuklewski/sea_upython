@@ -1,0 +1,28 @@
+<sysdef top="MAIN">
+
+
+<include path="DAC7311.xml"/>
+<include path="ADC1173.xml"/>
+
+
+<!-- <block name="SYS1"> -->
+  <!-- <creg name="CTRL" desc="Control register" stb="1"> -->
+    <!-- <field name="START" width="1"/> -->
+    <!-- <field name="STOP" width="1"/>     -->
+  <!-- </creg> -->
+  <!-- <sreg name="STATUS" desc="Status register" ack="1" /> -->
+  <!-- <creg name="ENABLEs" desc="Link enable registers" reps="10"/> -->
+<!-- </block> -->
+
+<block name="MAIN">
+  <creg name="CTRL" desc="Control register in the main block" >
+    <field name="CLK_ENABLE" width="1"/>
+    <field name="CLK_FREQ" width="4"/>
+    <field name="PLL_RESET" width="1"/>
+  </creg>
+  <subblock name="DAC7311" type="DAC7311" force_vec="1" />
+  <subblock name="ADC1173" type="ADC1173" force_vec="1" />
+  <!-- <blackbox name="EXTERN" type="EXTTEST" addrbits="10" reps="3" /> -->
+</block>
+
+</sysdef>

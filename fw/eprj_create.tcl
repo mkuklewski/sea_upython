@@ -506,6 +506,36 @@ proc read_prj { ablock prj } {
     }
 }
 
+## MKU edit - added simple generation of Xilinx IP Cores 
+#VIO
+create_ip -name vio -vendor xilinx.com -library ip -version 3.0 -module_name vio_0 -dir ./$eprj_proj_name/$eprj_proj_name.ip_user_files
+set_property -dict [list CONFIG.C_PROBE_OUT0_WIDTH {32} CONFIG.C_PROBE_IN0_WIDTH {32}] [get_ips vio_0]
+generate_target {instantiation_template} [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/vio_0/vio_0.xci]
+generate_target all [get_files  ./$eprj_proj_name/$eprj_proj_name.ip_user_files/vio_0/vio_0.xci]
+catch { config_ip_cache -export [get_ips -all vio_0] }
+export_ip_user_files -of_objects [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/vio_0/vio_0.xci] -no_script -sync -force -quiet
+create_ip_run [get_files -of_objects [get_fileset sources_1] ./$eprj_proj_name/$eprj_proj_name.ip_user_files/vio_0/vio_0.xci]
+launch_runs -jobs 4 vio_0_synth_1
+
+##ILA
+create_ip -name ila -vendor xilinx.com -library ip -version 6.2 -module_name ila_0 -dir ./$eprj_proj_name/$eprj_proj_name.ip_user_files
+set_property -dict [list CONFIG.C_NUM_OF_PROBES {4} CONFIG.C_ENABLE_ILA_AXI_MON {false} CONFIG.C_MONITOR_TYPE {Native}] [get_ips ila_0]
+generate_target {instantiation_template} [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/ila_0/ila_0.xci]
+generate_target all [get_files  ./$eprj_proj_name/$eprj_proj_name.ip_user_files/ila_0/ila_0.xci]
+catch { config_ip_cache -export [get_ips -all ila_0] }
+export_ip_user_files -of_objects [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/ila_0/ila_0.xci] -no_script -sync -force -quiet
+create_ip_run [get_files -of_objects [get_fileset sources_1] ./$eprj_proj_name/$eprj_proj_name.ip_user_files/ila_0/ila_0.xci]
+launch_runs -jobs 4 ila_0_synth_1
+
+##Clock wizard
+create_ip -name clk_wiz -vendor xilinx.com -library ip -version 6.0 -module_name clk_wiz_0 -dir ./$eprj_proj_name/$eprj_proj_name.ip_user_files
+set_property -dict [list CONFIG.RESET_TYPE {ACTIVE_LOW} CONFIG.RESET_PORT {resetn}] [get_ips clk_wiz_0]
+generate_target {instantiation_template} [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/clk_wiz_0/clk_wiz_0.xci]
+generate_target all [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/clk_wiz_0/clk_wiz_0.xci]
+catch { config_ip_cache -export [get_ips -all clk_wiz_0] }
+export_ip_user_files -of_objects [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/clk_wiz_0/clk_wiz_0.xci] -no_script -sync -force -quiet
+create_ip_run [get_files -of_objects [get_fileset sources_1] ./$eprj_proj_name/$eprj_proj_name.ip_user_files/clk_wiz_0/clk_wiz_0.xci]
+launch_runs -jobs 4 clk_wiz_0_synth_1
 
 # Read project definitions
 set main_block(file_name) ""

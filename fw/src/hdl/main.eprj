@@ -1,5 +1,7 @@
 vhdl work main.vhd
-vhdl work exttest.vhd
-vhdl work sys1.vhd
+#vhdl work exttest.vhd
+#vhdl work sys1.vhd
 include spi2wb
-include wb_cdc
+include dac7311
+include adc1173
+#include wb_cdc

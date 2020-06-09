@@ -1,39 +1,41 @@
 #!/usr/bin/python3
 import spibus
-from agwb_MAIN import Agwb_MAIN
+from agwb_MAIN import Agwb_MAIN,Agwb_ADC1173,Agwb_DAC7311
 mif = spibus.spibus_iface()
 a=Agwb_MAIN(mif,0)
 print("Test the ID")
 print ("ID read:"+ hex(a.ID.read()))
 print ("VER read:"+ hex(a.VER.read()))
-print("LINKS0 ID read:"+hex(a.LINKS[0].ID.read()))
-print("LINKS0 VER read:"+hex(a.LINKS[0].VER.read()))
-print("LINKS0 STATUS read:"+hex(a.LINKS[0].STATUS.read()))
-print("Initial value of MAIN.CTRL:"+hex(a.CTRL.read()))
-print("LINKS0 CTRL.START write")
-a.LINKS[0].CTRL.START.write(1)
-print("LINKS4 STATUS read:"+hex(a.LINKS[4].STATUS.read()))
-print("Now we test bitfields")
-print("LINKS4 CTRL.START write")
-a.LINKS[4].CTRL.START.write(1)
-a.CTRL.CLK_ENABLE.write(1)
-a.CTRL.CLK_FREQ.write(0xc)
-a.CTRL.PLL_RESET.write(1)
-a.CTRL.CLK_ENABLE.write(0)
-a.CTRL.CLK_FREQ.write(0x5)
-a.CTRL.PLL_RESET.write(0)
-print("Now we test the blackbox")
-a.EXTERN[0].reg[1].write(0x5)
-print("EXTERN[0] REG1 read:"+hex(a.EXTERN[0].reg[1].read()))
-a.EXTERN[1].reg[2].write(0x76)
-print("EXTERN[1] REG2 read:"+hex(a.EXTERN[1].reg[2].read()))
-print("And again we read the LINKS1 ID and version")
-print("LINKS1 ID read:"+hex(a.LINKS[0].ID.read()))
-print("LINKS1 VER read:"+hex(a.LINKS[0].VER.read()))
-a.TEST_OUT[1].write(0x13)
-print("TEST_IN_i(0):"+hex(a.TEST_IN[0].read()))
-print("TEST_IN_i(1):"+hex(a.TEST_IN[1].read()))
-print("TEST_IN_i(2):"+hex(a.TEST_IN[2].read()))
+print("Test the ADC ID")
+print ("ID read:"+ hex(a.ADC1173[0].ID.read()))
+print ("VER read:"+ hex(a.ADC1173[0].VER.read()))
+print("Test the DAC ID")
+print ("ID read:"+ hex(a.DAC7311[0].ID.read()))
+print ("VER read:"+ hex(a.DAC7311[0].VER.read()))
+
+
+print("Enable ADC")
+a.ADC1173[0].Control.ENABLE.write(0x1)
+print("Check ADC ENABLE:"+hex(a.ADC1173[0].Control.ENABLE.read()))
+a.ADC1173[0].Control.clk_divider.write(0xA)
+print("Check ADC Clock Divider:"+hex(a.ADC1173[0].Control.clk_divider.read()))
+
+print("Check ADC Value:"+hex(a.ADC1173[0].ADC_Val.read()))
+
+
+
+print("Enable DAC")
+a.DAC7311[0].Control.MODE.write(0x0)
+print("Check DAC MODE:"+hex(a.ADC1173.Control.MODE.read()))
+a.DAC7311[0].Control.VALUE.write(0x3FF)
+print("Check DAC VALUE:"+hex(a.DAC7311[0].Control.VALUE.read()))
+a.DAC7311[0].Control.WRITE.write(0x1)
+print("Check DAC WRITE:"+hex(a.DAC7311[0].Control.WRITE.read()))
+a.DAC7311[0].Control.WRITE.write(0x0)
+print("Check DAC WRITE:"+hex(a.DAC7311[0].Control.WRITE.read()))
+
+print("Check ADC Value:"+hex(a.ADC1173[0].ADC_Val.read()))
+
 
 
 

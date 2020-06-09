@@ -1,0 +1,10 @@
+<block name="DAC7311">
+  <creg name="Control" desc="Control register" stb="1">
+    <field name="WRITE" width="1" desc="Write New Value"/>
+    <field name="MODE" width="2" default="0" desc="Operating Mode"/>
+    <field name="VALUE" width="12" desc="Value to be set" />
+    <field name="clk_divider" width="16" default="0x5" type= "unsigned" desc="DAC Clock Divider"/>
+  </creg>
+  <sreg name="Status" width="1" desc="Status register" ack="1" />
+</block>
+
