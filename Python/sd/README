@@ -6,3 +6,4 @@ from AGWB directories
 
 Copy main.bit from Vivado impl_1 directory
 
+Fill in the information on wifi SSID and pasword, then change "example_config.py" to "config.py". 

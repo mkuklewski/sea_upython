@@ -1,3 +1,6 @@
 [submodule "addr_gen_wb"]
 	path = modules/addr_gen_wb
 	url = https://github.com/wzab/addr_gen_wb.git
+[submodule "modules/micropython-lib"]
+	path = modules/micropython-lib
+	url = https://github.com/micropython/micropython-lib.git

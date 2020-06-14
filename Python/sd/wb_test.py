@@ -26,7 +26,7 @@ print("Check ADC Value:"+hex(a.ADC1173[0].ADC_Val.read()))
 
 print("Enable DAC")
 a.DAC7311[0].Control.MODE.write(0x0)
-print("Check DAC MODE:"+hex(a.ADC1173.Control.MODE.read()))
+print("Check DAC MODE:"+hex(a.DAC7311[0].Control.MODE.read()))
 a.DAC7311[0].Control.VALUE.write(0x3FF)
 print("Check DAC VALUE:"+hex(a.DAC7311[0].Control.VALUE.read()))
 a.DAC7311[0].Control.WRITE.write(0x1)
@@ -34,6 +34,10 @@ print("Check DAC WRITE:"+hex(a.DAC7311[0].Control.WRITE.read()))
 a.DAC7311[0].Control.WRITE.write(0x0)
 print("Check DAC WRITE:"+hex(a.DAC7311[0].Control.WRITE.read()))
 
+print("Check ADC Value:"+hex(a.ADC1173[0].ADC_Val.read()))
+print("Check ADC Value:"+hex(a.ADC1173[0].ADC_Val.read()))
+print("Check ADC Value:"+hex(a.ADC1173[0].ADC_Val.read()))
+print("Check ADC Value:"+hex(a.ADC1173[0].ADC_Val.read()))
 print("Check ADC Value:"+hex(a.ADC1173[0].ADC_Val.read()))
 
 

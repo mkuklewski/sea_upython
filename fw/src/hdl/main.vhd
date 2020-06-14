@@ -1,50 +1,18 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
+-- Creator: Michal Kuklewski 
 -- Create Date: 23.05.2020 00:22:38
--- Design Name: 
--- Module Name: top - rtl
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
 -- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
---  FIRST TO DO
---  - projekt z constraintami     -- done
---  
---  - wejście dla ADC 14bit, 10MS/s, 14bit dane, wyjście zegara, 3V3    
---  
---  - chipscope zaimplementowany jawnym kodem, obsluga ADC + dodatkowej magistrali 16bit  
---  
---  - VIO 32 bit we + 32 bit WY                                                            -- done
---
---
---
---
---
---- interfejs SPI do ESP32, najlepiej QSPI, ale na razie może być SPI.    -- partialy done
---
---- pamięć RAM 32bit * min 2k
---
---- zestaw rejestrow, powiedzmy 8x 32 bit
---
---- wsparcie dla micropythona, MQTT, odczyt/zapis pamięci RAM,  zapis/odczyt rejestrow
---
---
---
---
---
---
---
---
---
+--  TO DO
+--  1. Project generation with proper constrains                  - done
+--  2. Implement onboard DAC and ADC with Wishbone interface      - done
+--  3. Implement Xilinx Chipscope                                 - done
+--  4. Implement VIO 32 bit IN + 32 bit OUT                       - done
+--  5. SPI interface to ESP32 (with possible upgrade to QSPI)     - SPI done
+--  6. RAM Memory 32bit * min 2k
+--  7. Control registers - 8x 32 bit                              - done
+--  8. MicroPython Support                                        - done
+--  9. MQTT                             - require more specification
+-- 10. Memory Read/Write                - require more specification
 --
 ----------------------------------------------------------------------------------
 
@@ -65,33 +33,27 @@ entity main is
     rst_n_i   : in  std_logic;
     clk_sys_i : in  std_logic;
     
-    
+    -- LED outputs 
     LED_1_o       : out std_logic;
     LED_2_o       : out std_logic;
     
-    
-    --clk_io_i  : in  std_logic;
-    
-    -- o_led     : out std_logic;
     -- SPI interface
     spi_miso  : out std_logic;
     spi_mosi  : in  std_logic;
     spi_sck   : in  std_logic;
     spi_cs    : in  std_logic;
     
+    -- ADC 1173 Innterface
     adc_en_o      : out std_logic;
     adc_clk_o     : out std_logic;
     adc_data_iv   : in std_logic_vector(7 downto 0);
     
+    -- DAC 7311 Innterface
     dac_data_o    : out std_logic;
     dac_clk_o     : out std_logic;
     dac_sync_n_o  : out std_logic
     
-    
-    
-    
-    
-    );
+  );
 
 end entity main;
 
@@ -117,10 +79,9 @@ architecture rtl of main is
   signal ADC1173_wb_m_o                                   : t_wishbone_master_out_array(0 to 0);
   signal ADC1173_wb_m_i                                   : t_wishbone_master_in_array(0 to 0);
   signal CTRL_o                                       : t_CTRL;
-  -- signal rst_sys_0, rst_sys_n_i, rst_io_0, rst_io_n_i : std_logic;
-  -- signal clk_io_i                                     : std_logic;
-  -- signal rst_n_i                                      : std_logic                 := '0';
   
+  signal REG_o            : t_REG_array;
+  signal s_reg_v          : std_logic_vector(31 downto 0);
   
 
   -- attribute ASYNC_REG                                                 : string;
@@ -193,9 +154,20 @@ begin  -- architecture rtl
       ADC1173_wb_m_o  => ADC1173_wb_m_o,
       ADC1173_wb_m_i  => ADC1173_wb_m_i,
       CTRL_o        => CTRL_o,
+      REG_o         => REG_o,
       rst_n_i       => s_sys_rst_n,
       clk_sys_i     => clk_sys_i
     );
+    
+    -- Example how to access registers (need to change signal name !!!)
+    -- s_reg_v <= REG_o(0);
+    -- s_reg_v <= REG_o(1);
+    -- s_reg_v <= REG_o(2);
+    -- s_reg_v <= REG_o(3);
+    -- s_reg_v <= REG_o(4);
+    -- s_reg_v <= REG_o(5);
+    -- s_reg_v <= REG_o(6);
+    -- s_reg_v <= REG_o(7);
 
 
 
@@ -235,45 +207,6 @@ begin  -- architecture rtl
     
     );
 
-
-
-  -- gl0 : for i in 0 to 2 generate
-    -- wb_cdc_1 : entity work.wb_cdc
-      -- generic map (
-        -- width => 32)
-      -- port map (
-        -- slave_clk_i    => clk_sys_i,
-        -- slave_rst_n_i  => rst_sys_n_i,
-        -- slave_i        => CDC_wb_m_o(i),
-        -- slave_o        => CDC_wb_m_i(i),
-        -- master_clk_i   => clk_io_i,
-        -- master_rst_n_i => rst_io_n_i,
-        -- master_i       => EXTERN_wb_m_i(i),
-        -- master_o       => EXTERN_wb_m_o(i));
-
-    -- ext_1 : entity work.exttest
-      -- generic map (
-        -- instance_number => 1,
-        -- addr_size       => 10
-        -- )
-      -- port map (
-        -- rst_n_i   => rst_io_n_i,
-        -- clk_sys_i => clk_io_i,
-        -- wb_s_in   => EXTERN_wb_m_o(i),
-        -- wb_s_out  => EXTERN_wb_m_i(i));
-
-  -- end generate gl0;
-
-  -- gl1 : for i in 0 to 4 generate
-
-    -- sys1_1 : entity work.sys1
-      -- port map (
-        -- rst_n_i   => rst_sys_n_i,
-        -- clk_sys_i => clk_sys_i,
-        -- wb_s_in   => LINKS_wb_m_o(i),
-        -- wb_s_out  => LINKS_wb_m_i(i));
-
-  -- end generate gl1;
   
   -----------------------------------------------------------------------------
   -- Debug
