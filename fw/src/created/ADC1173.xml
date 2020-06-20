@@ -1,7 +1,7 @@
 <block name="ADC1173">
   <creg name="Control" desc="Control register" stb="1">
     <field name="ENABLE" width="1" desc="Enable ADC"/>
-    <field name="clk_divider" width="16" default="0x5" type= "unsigned" desc="ADC Clock Divider"/>
+    <field name="clk_divider" width="16" default="0x4" type= "unsigned" desc="ADC Clock Divider"/>
   </creg>
   <sreg name="ADC_Val" width="8" desc="ADC Value register" ack="1" />
 </block>

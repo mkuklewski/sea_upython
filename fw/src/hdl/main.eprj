@@ -4,4 +4,5 @@ vhdl work main.vhd
 include spi2wb
 include dac7311
 include adc1173
+include gem
 #include wb_cdc

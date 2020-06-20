@@ -40,6 +40,9 @@ entity xwb_ADC1173 is
     slave_i       : in t_wishbone_slave_in;
     slave_o       : out t_wishbone_slave_out;
     
+    data_ov       : out std_logic_vector(7 downto 0);
+    valid_o       : out std_logic;
+    
     adc_en_o      : out std_logic;
     adc_clk_o     : out std_logic;
     adc_data_iv   : in std_logic_vector(7 downto 0)
@@ -87,7 +90,7 @@ begin
     
     
     s_enable          <= s_CTRL.ENABLE(0);
-    s_clk_divider_v   <= s_CTRL.clk_divider;
+    s_clk_divider_v   <= std_logic_vector(s_CTRL.clk_divider);
     
     
   cmp_ADC1173 : entity work.ADC1173
@@ -112,6 +115,11 @@ begin
       
     
     );
+    
+    data_ov <= s_data_v;
+    valid_o <= s_valid;
+    
+    
     
     
     

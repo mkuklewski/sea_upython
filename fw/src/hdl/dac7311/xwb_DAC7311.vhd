@@ -93,7 +93,7 @@ begin
     s_write   <= s_CTRL.write(0);
     s_mode_v  <= s_CTRL.mode;
     s_data_v  <= s_CTRL.value;
-    s_clk_divider_v  <= s_CTRL.clk_divider;
+    s_clk_divider_v  <= std_logic_vector(s_CTRL.clk_divider);
     
     
   cmp_DAC7311 : entity work.DAC7311

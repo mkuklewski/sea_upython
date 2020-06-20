@@ -3,16 +3,32 @@
 
 <include path="DAC7311.xml"/>
 <include path="ADC1173.xml"/>
+<include path="GEM.xml"/>
 
 <block name="MAIN">
   <creg name="CTRL" desc="Control register in the main block" >
-    <field name="CLK_ENABLE" width="1"/>
-    <field name="CLK_FREQ" width="4"/>
-    <field name="PLL_RESET" width="1"/>
+    <field name="rst_n" width="1" default="0x1"/>
+    <!-- <field name="CLK_FREQ" width="4"/> -->
+    <!-- <field name="PLL_RESET" width="1"/> -->
   </creg>
   <subblock name="DAC7311" type="DAC7311" force_vec="1" />
   <subblock name="ADC1173" type="ADC1173" force_vec="1" />
-  <creg name="REG" width="32" desc="Additional requested registers" reps="8"/>
+  <subblock name="GEM"     type="GEM" force_vec="1" />
+  
+  
+  
+  
+  <!-- <creg name="Offset_reg"     width="14"  default="0x0" type= "signed" desc="Offset register, which value corrects ADC sample"/> -->
+  <!-- <creg name="Threshold_reg"  width="14"  default="0x0" type= "signed" desc="Threshold register"/> -->
+  <!-- <creg name="Min_PW_reg"     width="8"   desc="Minimal PW Cycles"/> -->
+  <!-- <creg name="Max_PW_reg"     width="8"   desc="Maximal PW Cycles"/> -->
+  <!-- <creg name="Tail_reg"       width="8"   desc="Tail Samples Register"/> -->
+  
+  <!-- <sreg name="Error_cnt"      width="16"   desc="Error Count Register"/> -->
+  
+  
+  
+  <!-- <creg name="REG" width="32" desc="Additional requested registers" reps="8"/> -->
 </block>
 
 </sysdef>

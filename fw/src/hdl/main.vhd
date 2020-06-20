@@ -78,11 +78,15 @@ architecture rtl of main is
   signal DAC7311_wb_m_i                                   : t_wishbone_master_in_array(0 to 0);
   signal ADC1173_wb_m_o                                   : t_wishbone_master_out_array(0 to 0);
   signal ADC1173_wb_m_i                                   : t_wishbone_master_in_array(0 to 0);
+  signal GEM_wb_m_o                                   : t_wishbone_master_out_array(0 to 0);
+  signal GEM_wb_m_i                                   : t_wishbone_master_in_array(0 to 0);
   signal CTRL_o                                       : t_CTRL;
   
-  signal REG_o            : t_REG_array;
+  -- signal REG_o            : t_REG_array;
   signal s_reg_v          : std_logic_vector(31 downto 0);
   
+  signal s_data_v       : std_logic_vector(7 downto 0);
+  signal s_valid       : std_logic;
 
   -- attribute ASYNC_REG                                                 : string;
   -- attribute ASYNC_REG of rst_sys_0, rst_sys_n_i, rst_io_0, rst_io_n_i : signal is "TRUE";
@@ -149,12 +153,14 @@ begin  -- architecture rtl
     port map (
       slave_i       => wb_s_in,
       slave_o       => wb_s_out,
+      GEM_wb_m_o      => GEM_wb_m_o,
+      GEM_wb_m_i      => GEM_wb_m_i,
       DAC7311_wb_m_o  => DAC7311_wb_m_o,
       DAC7311_wb_m_i  => DAC7311_wb_m_i,
       ADC1173_wb_m_o  => ADC1173_wb_m_o,
       ADC1173_wb_m_i  => ADC1173_wb_m_i,
       CTRL_o        => CTRL_o,
-      REG_o         => REG_o,
+      -- REG_o         => REG_o,
       rst_n_i       => s_sys_rst_n,
       clk_sys_i     => clk_sys_i
     );
@@ -199,14 +205,31 @@ begin  -- architecture rtl
       slave_o    => ADC1173_wb_m_i(0),
       
       
+      data_ov    => s_data_v,
+      valid_o    => s_valid,
+      
+      
       adc_en_o    => adc_en_o,
       adc_clk_o   => adc_clk_o,
       adc_data_iv => adc_data_iv
-      
-      
-    
     );
 
+  cmp_xwb_GEM : entity work.xwb_GEM
+    PORT MAP (
+      clk_i      => s_sys_clk,
+      rst_n_i    => s_sys_rst_n,
+      
+      
+      slave_i    => GEM_wb_m_o(0),
+      slave_o    => GEM_wb_m_i(0),
+      
+      
+      data_iv    => s_data_v,
+      valid_i    => s_valid,
+      
+      test_state_id_ov  => open
+    );
+    
   
   -----------------------------------------------------------------------------
   -- Debug

@@ -537,6 +537,16 @@ export_ip_user_files -of_objects [get_files ./$eprj_proj_name/$eprj_proj_name.ip
 create_ip_run [get_files -of_objects [get_fileset sources_1] ./$eprj_proj_name/$eprj_proj_name.ip_user_files/clk_wiz_0/clk_wiz_0.xci]
 launch_runs -jobs 4 clk_wiz_0_synth_1
 
+##BRAM
+create_ip -name blk_mem_gen -vendor xilinx.com -library ip -version 8.4 -module_name blk_mem_gen_0 -dir ./$eprj_proj_name/$eprj_proj_name.ip_user_files
+set_property -dict [list CONFIG.Memory_Type {True_Dual_Port_RAM} CONFIG.Enable_32bit_Address {false} CONFIG.Use_Byte_Write_Enable {false} CONFIG.Byte_Size {9} CONFIG.Assume_Synchronous_Clk {true} CONFIG.Write_Width_A {32} CONFIG.Write_Depth_A {256} CONFIG.Read_Width_A {32} CONFIG.Operating_Mode_A {NO_CHANGE} CONFIG.Enable_A {Always_Enabled} CONFIG.Write_Width_B {32} CONFIG.Read_Width_B {32} CONFIG.Operating_Mode_B {READ_FIRST} CONFIG.Enable_B {Always_Enabled} CONFIG.Register_PortA_Output_of_Memory_Primitives {true} CONFIG.Register_PortB_Output_of_Memory_Primitives {true} CONFIG.Use_RSTA_Pin {false} CONFIG.Use_RSTB_Pin {false} CONFIG.Port_B_Clock {100} CONFIG.Port_B_Write_Rate {50} CONFIG.Port_B_Enable_Rate {100} CONFIG.EN_SAFETY_CKT {false}] [get_ips blk_mem_gen_0]
+generate_target {instantiation_template} [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/blk_mem_gen_0/blk_mem_gen_0.xci]
+generate_target all [get_files  ./$eprj_proj_name/$eprj_proj_name.ip_user_files/blk_mem_gen_0/blk_mem_gen_0.xci]
+catch { config_ip_cache -export [get_ips -all blk_mem_gen_0] }
+export_ip_user_files -of_objects [get_files ./$eprj_proj_name/$eprj_proj_name.ip_user_files/blk_mem_gen_0/blk_mem_gen_0.xci] -no_script -sync -force -quiet
+create_ip_run [get_files -of_objects [get_fileset sources_1] ./$eprj_proj_name/$eprj_proj_name.ip_user_files/blk_mem_gen_0/blk_mem_gen_0.xci]
+launch_runs -jobs 4 blk_mem_gen_0_synth_1
+
 # Read project definitions
 set main_block(file_name) ""
 set main_block(line_count) 0
