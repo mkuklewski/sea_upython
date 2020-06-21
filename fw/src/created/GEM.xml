@@ -1,0 +1,30 @@
+<block name="GEM">
+  <creg name="CTRL_0" desc="Control 0 register">
+    <field name="ENABLE"  width="1" desc="Enable GEM IP Core"/>
+    <field name="OFFSET"  width="14" default="0x0" type= "signed" desc="Offset register, which value corrects ADC sample"/>
+    <field name="THRESHOLD" width="14" default="0x0" type= "signed" desc="Threshold register"/>
+  </creg>
+  <creg name="CTRL_1" desc="Control 1 register">
+    <field name="MIN_PW"    width="8"  desc="Minimal PW Cycles"/>
+    <field name="MAX_PW"    width="8"  desc="Maximum PW Cycles"/>
+    <field name="TAIL"      width="8"  desc="Tail Samples"/>
+  </creg>
+  
+  <sreg name="Error_too_short_cnt"      width="16" desc="Error too_short register" ack="1" />
+  <sreg name="Error_too_long_cnt"       width="16" desc="Error too_long register" ack="1" />
+  <sreg name="Error_negative_value_cnt" width="16" desc="Error negative_value register" ack="1" />
+  <sreg name="Error_hist_bin_over_cnt"  width="16" desc="Error hist_bin_over register" ack="1" />
+  <sreg name="Error_overlapping_cnt"    width="16" desc="Error overlapping register" ack="1" />
+  
+  
+  <creg name="CTRL_2" desc="Control 1 register">
+    <field name="RESET_DPRAM_ADDRESS"  width="1" desc="Reset DPRAM Address to 0x0"/>
+  </creg>
+  
+  <sreg name="BIN_VALUE"      width="32" desc="BIN value read from DPRAM starting from 0x0, each read incement address" ack="1" />
+  
+  <!-- <creg name="CTRL_2" desc="Control 1 register"> -->
+    <!-- <field name="RESET_DPRAM_ADDRESS"  width="1" desc="Reset DPRAM Address to 0x0"/> -->
+  <!-- </creg> -->
+ 
+</block>
