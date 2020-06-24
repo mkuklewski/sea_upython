@@ -113,4 +113,4 @@ while True:
             # i = 0
     except OSError:
         print('OS Error!!!!')
-    sleep(1)
+    sleep(config.SLEEP_TIME)

@@ -145,13 +145,22 @@ architecture rtl of gem is
   signal s_doutb    : std_logic_vector(31 downto 0);
   
   
+  attribute MARK_DEBUG : string;
+  attribute MARK_DEBUG of r : signal is "TRUE";
+  attribute MARK_DEBUG of s_wea : signal is "TRUE";
+  attribute MARK_DEBUG of s_dina : signal is "TRUE";
+  attribute MARK_DEBUG of s_douta : signal is "TRUE";
+  attribute MARK_DEBUG of valid_i : signal is "TRUE";
+  attribute MARK_DEBUG of data_iv : signal is "TRUE";
+  attribute MARK_DEBUG of enable_i : signal is "TRUE";
+
     
 begin
 
     --
     -- Combinatorial process
     --
-    process (r, rst_n_i, valid_i, data_iv, offset_val_iv, threshold_val_iv, tail_samp_iv, s_douta, 
+    process (r, rst_n_i, enable_i, valid_i, data_iv, offset_val_iv, threshold_val_iv, tail_samp_iv, s_douta, 
             error_too_short_cnt_ack_i, error_too_long_cnt_ack_i, error_negative_value_cnt_ack_i, 
             error_hist_bin_over_cnt_ack_i, error_overlapping_cnt_ack_i, bin_dpram_value_ack_i,
             rst_dpram_address_i)  is
@@ -184,9 +193,9 @@ begin
       
       
       if (valid_i = '1') and (enable_i = '1') then
-        v.adc_data_v := to_signed(to_integer(unsigned(data_iv & "000000")),14);  -- Size of input vector can be changed here
+        v.adc_data_v := signed('0' & data_iv & "00000");  -- Size of input vector can be changed here
         
-        v.substract_data_v(0) := v.adc_data_v - signed(offset_val_iv);
+        v.substract_data_v(0) := resize(v.adc_data_v - signed(offset_val_iv), 15);
         v.substract_data_v(7 downto 1) := r.substract_data_v(6 downto 0);
         
         v.offset_val_v(0) := signed(offset_val_iv);
@@ -272,16 +281,19 @@ begin
               else 
                 v.error_too_long_cnt := r.error_too_long_cnt + 1;
               end if;  
+              v.main_fsm := idle;
             -- make error
             end if;
           else
             if (r.substract_data_v(0) < signed(threshold_val_iv)) then
+              v.main_fsm := idle;
               if (error_too_short_cnt_ack_i = '1') then
                 v.error_too_short_cnt := to_unsigned(1,16);
               else 
                 v.error_too_short_cnt := r.error_too_short_cnt + 1;
               end if;  
             end if;
+            
           end if;
           
           
@@ -300,6 +312,16 @@ begin
             if (r.accumulator >= 0) then 
               v.addra := std_logic_vector(unsigned(r.accumulator(r.accumulator'left downto r.accumulator'left - 7)));
               v.save_val  := '1';
+              
+              if (r.substract_data_v(0) > signed(threshold_val_iv)) then
+                if (error_overlapping_cnt_ack_i = '1') then
+                  v.error_overlapping_cnt := to_unsigned(1,16);
+                else 
+                  v.error_overlapping_cnt := r.error_overlapping_cnt + 1;
+                end if;  
+              end if;
+              
+              
             else 
               if (error_negative_value_cnt_ack_i = '1') then
                 v.error_negative_value_cnt := to_unsigned(1,16);
@@ -319,12 +341,23 @@ begin
       
       
       if (r.save_val = '1') then
+        test_state_id_ov <= std_logic_vector(to_unsigned(3,3)); --not really a stete, but might be useful
+        
         v.save_val  := '0';
         v.wea       := '1';
         if (r.addra = r.addrb) and (bin_dpram_value_ack_i = '1') then
           v.dina      := std_logic_vector(to_unsigned(1,32));
         else
-          v.dina      := std_logic_vector(unsigned(s_douta) + 1);
+          if (s_douta = x"FFFFFFFF") then
+            if (error_hist_bin_over_cnt_ack_i = '1') then
+              v.error_hist_bin_over_cnt := to_unsigned(1,16);
+            else 
+              v.error_hist_bin_over_cnt := r.error_hist_bin_over_cnt + 1;
+            end if;  
+        
+          else
+            v.dina      := std_logic_vector(unsigned(s_douta) + 1);
+          end if;
         end if;
         -- check if currently being read
       end if;

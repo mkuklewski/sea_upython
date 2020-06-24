@@ -87,6 +87,17 @@ architecture rtl of main is
   
   signal s_data_v       : std_logic_vector(7 downto 0);
   signal s_valid       : std_logic;
+  signal s_gem_data_v      : std_logic_vector(7 downto 0);
+  signal s_gem_valid      : std_logic;
+  
+  
+  
+  signal s_test_en      : std_logic;
+  signal s_frequency_v  : std_logic_vector(31 downto 0);
+  signal s_pulse_width  : std_logic_vector(31 downto 0);
+  signal s_test_data_v  : std_logic_vector(7 downto 0);
+  signal s_test_valid   : std_logic;
+  signal s_test_state_id   : std_logic_vector(2 downto 0);
 
   -- attribute ASYNC_REG                                                 : string;
   -- attribute ASYNC_REG of rst_sys_0, rst_sys_n_i, rst_io_0, rst_io_n_i : signal is "TRUE";
@@ -224,11 +235,15 @@ begin  -- architecture rtl
       slave_o    => GEM_wb_m_i(0),
       
       
-      data_iv    => s_data_v,
-      valid_i    => s_valid,
+      data_iv    => s_gem_data_v,
+      valid_i    => s_gem_valid,
       
-      test_state_id_ov  => open
+      test_state_id_ov  => s_test_state_id
     );
+    
+    s_gem_data_v  <= s_data_v when s_test_en = '0' else s_test_data_v;
+    s_gem_valid   <= s_valid  when s_test_en = '0' else s_test_valid;
+    
     
   
   -----------------------------------------------------------------------------
@@ -238,19 +253,35 @@ begin  -- architecture rtl
   cmp_vio_0 : entity work.vio_0
     PORT MAP (
       clk => s_sys_clk,
-      probe_in0 => s_probe_in_v,
-      probe_out0 => s_probe_out_v
+      probe_out0(0) => s_test_en,
+      probe_out1 => s_frequency_v,
+      probe_out2 => s_pulse_width
     );
   
   
-  -- cmp_ila_0 : entity work.ila_0
-  -- PORT MAP (
-    -- clk => clk,
+  cmp_ila_0 : entity work.ila_0
+  PORT MAP (
+    clk => s_sys_clk,
 
-    -- probe0 => probe0, 
-    -- probe1 => probe1, 
-    -- probe2 => probe2,
-    -- probe3 => probe3
-  -- );
+    probe0 => s_gem_data_v, 
+    probe1 => s_test_state_id
+  );
+  
+  cmp_test_data_gen : entity work.test_data_gen
+  PORT MAP (
+    clk_i         => s_sys_clk,
+    rst_n_i       => s_sys_rst_n,
+      
+    enable_i        => s_test_en, 
+    frequency_iv    => s_frequency_v,
+    pulse_width_iv  => s_pulse_width, 
+    
+    test_data_ov  => s_test_data_v,
+    test_valid_o  => s_test_valid
+  );
+  
+  
+  
+  
 
 end architecture rtl;

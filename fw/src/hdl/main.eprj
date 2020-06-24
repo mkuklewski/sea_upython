@@ -1,4 +1,5 @@
 vhdl work main.vhd
+vhdl work test_data_gen.vhd
 #vhdl work exttest.vhd
 #vhdl work sys1.vhd
 include spi2wb
