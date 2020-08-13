@@ -79,7 +79,7 @@ a.TEST_0.VALUE.write(0xFF)
 print("Set period - Amount of clock cycles after which Pulse will be repeated, 10ns base, 16bit resolution")
 a.TEST_1.PERIOD.write(0x800)
 print("Set period - Amount of clock cycles of the generated signal, must be less than period value, 10ns base, 16bit resolution")
-a.TEST_1.PULSE_WIDHT.write(0x640)
+a.TEST_1.PULSE_WIDHT.write(0x64)
 
 print("Enable Test Data Generator -> Generated data will be send to ADC1173 input")
 a.TEST_0.ENABLE.write(0x1)
