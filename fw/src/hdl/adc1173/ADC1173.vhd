@@ -100,7 +100,7 @@ begin
       else
         v.adc_en := '0';
         v.clk_cnt := r.clk_cnt + 1;
-        if (r.clk_cnt >= unsigned(clk_divider_iv)) then
+        if (r.clk_cnt >= (unsigned(clk_divider_iv)) - 1) then
           v.adc_clk := not r.adc_clk;
         -- elsif (r.clk_cnt >= ((g_system_clock/g_sampling_rate)/2)) and (r.clk_cnt < (g_system_clock/g_sampling_rate)) then
           -- v.adc_clk := '1';

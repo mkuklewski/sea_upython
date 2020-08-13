@@ -1,0 +1,19 @@
+<node id="SYS1">
+  <node id="ID" address="0x00000000" permission="r"/>
+  <node id="VER" address="0x00000001" permission="r"/>
+  <node id="CTRL" address="0x00000002" permission="rw">
+    <node id="START" mask="0x00000001"/>
+    <node id="STOP" mask="0x00000002"/>
+  </node>
+  <node id="STATUS" address="0x00000003" permission="r"/>
+  <node id="ENABLEs[0]" address="0x00000004" permission="rw"/>
+  <node id="ENABLEs[1]" address="0x00000005" permission="rw"/>
+  <node id="ENABLEs[2]" address="0x00000006" permission="rw"/>
+  <node id="ENABLEs[3]" address="0x00000007" permission="rw"/>
+  <node id="ENABLEs[4]" address="0x00000008" permission="rw"/>
+  <node id="ENABLEs[5]" address="0x00000009" permission="rw"/>
+  <node id="ENABLEs[6]" address="0x0000000a" permission="rw"/>
+  <node id="ENABLEs[7]" address="0x0000000b" permission="rw"/>
+  <node id="ENABLEs[8]" address="0x0000000c" permission="rw"/>
+  <node id="ENABLEs[9]" address="0x0000000d" permission="rw"/>
+</node>

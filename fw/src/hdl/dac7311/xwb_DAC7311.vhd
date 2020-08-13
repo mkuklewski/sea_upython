@@ -59,11 +59,11 @@ architecture rtl of xwb_DAC7311 is
     signal s_clk_divider_v   : std_logic_vector(15 downto 0);
     
     
-    attribute MARK_DEBUG : string;
-    attribute MARK_DEBUG of s_write : signal is "TRUE";
-    attribute MARK_DEBUG of s_mode_v : signal is "TRUE";
-    attribute MARK_DEBUG of s_data_v : signal is "TRUE";
-    attribute MARK_DEBUG of s_done : signal is "TRUE";
+    -- attribute MARK_DEBUG : string;
+    -- attribute MARK_DEBUG of s_write : signal is "TRUE";
+    -- attribute MARK_DEBUG of s_mode_v : signal is "TRUE";
+    -- attribute MARK_DEBUG of s_data_v : signal is "TRUE";
+    -- attribute MARK_DEBUG of s_done : signal is "TRUE";
 				
     
     

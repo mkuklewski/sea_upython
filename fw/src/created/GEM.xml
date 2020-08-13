@@ -22,6 +22,8 @@
   </creg>
   
   <sreg name="BIN_VALUE"      width="32" desc="BIN value read from DPRAM starting from 0x0, each read incement address" ack="1" />
+  <sreg name="OFFSET_READOUT" width="15" type= "signed" desc="Offset readout register, which is latched when FSM detects signal" ack="1" />  
+  <sreg name="FSM_STATE"      width="3" desc="FSM State" ack="1" />
   
   <!-- <creg name="CTRL_2" desc="Control 1 register"> -->
     <!-- <field name="RESET_DPRAM_ADDRESS"  width="1" desc="Reset DPRAM Address to 0x0"/> -->

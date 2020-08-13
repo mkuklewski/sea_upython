@@ -40,8 +40,9 @@ entity test_data_gen is
     rst_n_i       : in std_logic;
       
     enable_i        : in std_logic;
-    frequency_iv    : in std_logic_vector(31 downto 0);
-    pulse_width_iv  : in std_logic_vector(31 downto 0);
+    period_iv       : in std_logic_vector(15 downto 0);
+    pulse_width_iv  : in std_logic_vector(15 downto 0);
+    value_iv        : in std_logic_vector(7 downto 0);
     
     test_data_ov  : out std_logic_vector(7 downto 0);
     test_valid_o  : out std_logic
@@ -54,9 +55,9 @@ end test_data_gen;
 architecture rtl of test_data_gen is
 
   type regs_type is record
-    clk_cnt       : unsigned(31 downto 0);
-    sample_cnt       : unsigned(31 downto 0);
-    pulse_cnt     : unsigned(31 downto 0);
+    clk_cnt       : unsigned(15 downto 0);
+    sample_cnt       : unsigned(15 downto 0);
+    pulse_cnt     : unsigned(15 downto 0);
     test_data     : std_logic_vector(7 downto 0);
     test_valid    : std_logic;
     
@@ -75,12 +76,20 @@ architecture rtl of test_data_gen is
   signal r      : regs_type := regs_reset;
   signal rin    : regs_type;
 
+  
+  -- attribute MARK_DEBUG : string;
+  -- attribute MARK_DEBUG of r : signal is "TRUE";
+  -- attribute MARK_DEBUG of enable_i : signal is "TRUE";
+  -- attribute MARK_DEBUG of pulse_width_iv : signal is "TRUE";
+  -- attribute MARK_DEBUG of value_iv : signal is "TRUE";
+  -- attribute MARK_DEBUG of test_data_ov : signal is "TRUE";
+  
 begin
 
     --
     -- Combinatorial process
     --
-    process (r, rst_n_i, enable_i, frequency_iv, pulse_width_iv)  is
+    process (r, rst_n_i, enable_i, period_iv, pulse_width_iv, value_iv)  is
       variable v  : regs_type;
     begin
       v := r;
@@ -89,28 +98,29 @@ begin
       
       if (enable_i = '1') then
         if (r.clk_cnt = 0) then
-          v.clk_cnt := unsigned(frequency_iv); -- probably -1
+          v.clk_cnt := unsigned(period_iv) - 1; -- probably -1
           -- v.pulse_en  := '1';
-          v.pulse_cnt := unsigned(pulse_width_iv);
+          v.pulse_cnt := unsigned(pulse_width_iv) - 1;
           
           
         else 
           v.clk_cnt := r.clk_cnt - 1;
         end if;
         
-        if r.sample_cnt = 0 then
-          v.sample_cnt := to_unsigned(9,32);
+        -- Add below lines if there is need for the generator to work as ADC1173 IP Core output
+        -- if r.sample_cnt = 0 then
+          -- v.sample_cnt := to_unsigned(9,16);
           if r.pulse_cnt > 0 then
-            v.test_data   := x"FF";
+            v.test_data   := value_iv;
             v.test_valid  := '1';
             v.pulse_cnt := r.pulse_cnt - 1;
           else
             v.test_data   := x"00";
           
           end if;
-        else
-          v.sample_cnt := r.sample_cnt - 1;
-        end if;
+        -- else
+          -- v.sample_cnt := r.sample_cnt - 1;
+        -- end if;
         
       
       

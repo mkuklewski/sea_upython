@@ -85,7 +85,7 @@ begin
     --
     -- Combinatorial process
     --
-    process (r, rst_n_i, write_i, mode_iv, data_iv)  is
+    process (r, rst_n_i, write_i, mode_iv, data_iv, clk_divider_iv)  is
       variable v  : regs_type;
     begin
       v := r;

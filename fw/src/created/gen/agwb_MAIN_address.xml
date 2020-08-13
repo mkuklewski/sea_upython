@@ -1,0 +1,18 @@
+<node id="MAIN">
+  <node id="GEM[0]" address="0x00000000" module="file://agwb_GEM_address.xml"/>
+  <node id="ID" address="0x00000010" permission="r"/>
+  <node id="VER" address="0x00000011" permission="r"/>
+  <node id="CTRL" address="0x00000012" permission="rw">
+    <node id="rst_n" mask="0x00000001"/>
+  </node>
+  <node id="TEST_0" address="0x00000013" permission="rw">
+    <node id="ENABLE" mask="0x00000001"/>
+    <node id="VALUE" mask="0x000001fe"/>
+  </node>
+  <node id="TEST_1" address="0x00000014" permission="rw">
+    <node id="PERIOD" mask="0x0000ffff"/>
+    <node id="PULSE_WIDHT" mask="0xffff0000"/>
+  </node>
+  <node id="DAC7311[0]" address="0x00000018" module="file://agwb_DAC7311_address.xml"/>
+  <node id="ADC1173[0]" address="0x0000001c" module="file://agwb_ADC1173_address.xml"/>
+</node>

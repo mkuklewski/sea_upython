@@ -15,6 +15,19 @@
   <subblock name="ADC1173" type="ADC1173" force_vec="1" />
   <subblock name="GEM"     type="GEM" force_vec="1" />
   
+  <creg name="TEST_0" desc="Test register 0 for data generator" >
+    <field name="ENABLE"        width="1" desc="Enable TEST generator"/>
+    <field name="VALUE"         width="8" desc="Value "/>
+    <!-- <field name="CLK_FREQ" width="4"/> -->
+    <!-- <field name="PLL_RESET" width="1"/> -->
+  </creg>
+  
+  <creg name="TEST_1" desc="Test register 1 for data generator" >
+    <field name="PERIOD"        width="16" desc="Amount of clock cycles after which Pulse will be repeated, 10ns base"/>
+    <field name="PULSE_WIDHT"   width="16" desc="Amount of clock cycles of positive signal, must be less than period value, 10ns base"/>
+    <!-- <field name="CLK_FREQ" width="4"/> -->
+    <!-- <field name="PLL_RESET" width="1"/> -->
+  </creg>
   
   
   

@@ -60,13 +60,13 @@ architecture rtl of xwb_ADC1173 is
     signal s_data_v   : std_logic_vector(7 downto 0);
     signal s_clk_divider_v   : std_logic_vector(15 downto 0);
     
-    attribute MARK_DEBUG : string;
-    attribute MARK_DEBUG of s_enable : signal is "TRUE";
-    attribute MARK_DEBUG of s_data_v : signal is "TRUE";
-    attribute MARK_DEBUG of s_valid : signal is "TRUE";
-    attribute MARK_DEBUG of adc_data_iv : signal is "TRUE";
-    attribute MARK_DEBUG of adc_clk_o : signal is "TRUE";
-    attribute MARK_DEBUG of adc_en_o : signal is "TRUE";
+    -- attribute MARK_DEBUG : string;
+    -- attribute MARK_DEBUG of s_enable : signal is "TRUE";
+    -- attribute MARK_DEBUG of s_data_v : signal is "TRUE";
+    -- attribute MARK_DEBUG of s_valid : signal is "TRUE";
+    -- attribute MARK_DEBUG of adc_data_iv : signal is "TRUE";
+    -- attribute MARK_DEBUG of adc_clk_o : signal is "TRUE";
+    -- attribute MARK_DEBUG of adc_en_o : signal is "TRUE";
 
 begin
 

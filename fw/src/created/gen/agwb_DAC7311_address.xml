@@ -1,0 +1,11 @@
+<node id="DAC7311">
+  <node id="ID" address="0x00000000" permission="r"/>
+  <node id="VER" address="0x00000001" permission="r"/>
+  <node id="Control" address="0x00000002" permission="rw">
+    <node id="WRITE" mask="0x00000001"/>
+    <node id="MODE" mask="0x00000006"/>
+    <node id="VALUE" mask="0x00007ff8"/>
+    <node id="clk_divider" mask="0x7fff8000"/>
+  </node>
+  <node id="Status" address="0x00000003" permission="r" mask="0x00000003"/>
+</node>

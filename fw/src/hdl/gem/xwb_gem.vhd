@@ -74,6 +74,11 @@ architecture rtl of xwb_GEM is
     signal s_error_overlapping_cnt_ack      : std_logic;
     signal s_BIN_VALUE_v                    : std_logic_vector(31 downto 0);
     signal s_BIN_VALUE_ack                  : std_logic;
+    signal s_offset_readout_ov                    : std_logic_vector(14 downto 0);
+    signal s_OFFSET_READOUT_v                    : signed(14 downto 0);
+    signal s_OFFSET_READOUT_ack                  : std_logic;
+    signal s_FSM_STATE_v                    : std_logic_vector(2 downto 0);
+    signal s_FSM_STATE_ack                  : std_logic;
     signal s_rst_dpram_address              : std_logic;
     
     
@@ -110,13 +115,17 @@ begin
       Error_overlapping_cnt_i_ack     => s_error_overlapping_cnt_ack,
       BIN_VALUE_i                     => s_BIN_VALUE_v,
       BIN_VALUE_i_ack                 => s_BIN_VALUE_ack,
+      OFFSET_READOUT_i                => s_OFFSET_READOUT_v,
+      OFFSET_READOUT_i_ack            => s_OFFSET_READOUT_ack,
+      FSM_STATE_i                     => s_FSM_STATE_v,
+      FSM_STATE_i_ack                 => s_FSM_STATE_ack,
 
       rst_n_i    => rst_n_i,
       clk_sys_i      => clk_i
     );
     
     
-    
+    s_OFFSET_READOUT_v <= signed(s_offset_readout_ov);
     
     s_enable          <= s_CTRL_0.ENABLE(0);
     s_offset_val_v    <= std_logic_vector(s_CTRL_0.OFFSET);
@@ -128,6 +137,7 @@ begin
     
     s_rst_dpram_address     <= s_CTRL_2.RESET_DPRAM_ADDRESS(0);
     
+    test_state_id_ov <= s_FSM_STATE_v;
     
   cmp_GEM : entity work.gem
     PORT MAP (
@@ -146,7 +156,9 @@ begin
       max_pw_iv         => s_max_pw_v,
       tail_samp_iv      => s_tail_samp_v,
       
-      test_state_id_ov  => test_state_id_ov,
+      offset_readout_ov  => s_offset_readout_ov,
+      
+      test_state_id_ov  => s_FSM_STATE_v,
       
       error_too_short_cnt_ov          => s_error_too_short_cnt_v,
       error_too_short_cnt_ack_i       => s_error_too_short_cnt_ack,

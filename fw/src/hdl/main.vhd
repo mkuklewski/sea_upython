@@ -68,20 +68,24 @@ architecture rtl of main is
   signal s_probe_out_v    : std_logic_vector(31 downto 0);
 
 
-  signal wb_s_in                                      : t_wishbone_slave_in;
-  signal wb_s_out                                     : t_wishbone_slave_out;
-  signal LINKS_wb_m_o                                 : t_wishbone_master_out_array(0 to 4);
-  signal LINKS_wb_m_i                                 : t_wishbone_master_in_array(0 to 4);
-  signal EXTERN_wb_m_o                                : t_wishbone_master_out_array(0 to 2);
-  signal EXTERN_wb_m_i                                : t_wishbone_master_in_array(0 to 2);
-  signal DAC7311_wb_m_o                                   : t_wishbone_master_out_array(0 to 0);
-  signal DAC7311_wb_m_i                                   : t_wishbone_master_in_array(0 to 0);
-  signal ADC1173_wb_m_o                                   : t_wishbone_master_out_array(0 to 0);
-  signal ADC1173_wb_m_i                                   : t_wishbone_master_in_array(0 to 0);
-  signal GEM_wb_m_o                                   : t_wishbone_master_out_array(0 to 0);
-  signal GEM_wb_m_i                                   : t_wishbone_master_in_array(0 to 0);
-  signal CTRL_o                                       : t_CTRL;
+  signal wb_s_in                  : t_wishbone_slave_in;
+  signal wb_s_out                 : t_wishbone_slave_out;
+  signal LINKS_wb_m_o             : t_wishbone_master_out_array(0 to 4);
+  signal LINKS_wb_m_i             : t_wishbone_master_in_array(0 to 4);
+  signal EXTERN_wb_m_o            : t_wishbone_master_out_array(0 to 2);
+  signal EXTERN_wb_m_i            : t_wishbone_master_in_array(0 to 2);
+  signal DAC7311_wb_m_o           : t_wishbone_master_out_array(0 to 0);
+  signal DAC7311_wb_m_i           : t_wishbone_master_in_array(0 to 0);
+  signal ADC1173_wb_m_o           : t_wishbone_master_out_array(0 to 0);
+  signal ADC1173_wb_m_i           : t_wishbone_master_in_array(0 to 0);
+  signal GEM_wb_m_o               : t_wishbone_master_out_array(0 to 0);
+  signal GEM_wb_m_i               : t_wishbone_master_in_array(0 to 0);
+  signal CTRL_o                   : t_CTRL;
+  signal TEST_0_o                 : t_TEST_0;
+  signal TEST_1_o                 : t_TEST_1;
   
+  
+  signal s_adc_data_v      : std_logic_vector(7 downto 0);
   -- signal REG_o            : t_REG_array;
   signal s_reg_v          : std_logic_vector(31 downto 0);
   
@@ -93,11 +97,13 @@ architecture rtl of main is
   
   
   signal s_test_en      : std_logic;
-  signal s_frequency_v  : std_logic_vector(31 downto 0);
-  signal s_pulse_width  : std_logic_vector(31 downto 0);
+  signal s_frequency_v  : std_logic_vector(15 downto 0);
+  signal s_pulse_width  : std_logic_vector(15 downto 0);
   signal s_test_data_v  : std_logic_vector(7 downto 0);
   signal s_test_valid   : std_logic;
   signal s_test_state_id   : std_logic_vector(2 downto 0);
+  
+  signal s_rst_n_local  : std_logic;
 
   -- attribute ASYNC_REG                                                 : string;
   -- attribute ASYNC_REG of rst_sys_0, rst_sys_n_i, rst_io_0, rst_io_n_i : signal is "TRUE";
@@ -130,7 +136,7 @@ begin  -- architecture rtl
   process (s_sys_clk) is
   begin  -- process
     if rising_edge(s_sys_clk) then  -- rising clock edge
-      if (s_pll_locked = '1') then
+      if (s_pll_locked = '1') and (s_rst_n_local = '1') then
         if s_rst_cnt > 0 then
           s_sys_rst_n <= '0';
           s_rst_cnt <= s_rst_cnt - 1;
@@ -171,10 +177,14 @@ begin  -- architecture rtl
       ADC1173_wb_m_o  => ADC1173_wb_m_o,
       ADC1173_wb_m_i  => ADC1173_wb_m_i,
       CTRL_o        => CTRL_o,
+      TEST_0_o      => TEST_0_o,
+      TEST_1_o      => TEST_1_o,
       -- REG_o         => REG_o,
       rst_n_i       => s_sys_rst_n,
       clk_sys_i     => clk_sys_i
     );
+    
+    s_rst_n_local <= CTRL_o.rst_n(0);
     
     -- Example how to access registers (need to change signal name !!!)
     -- s_reg_v <= REG_o(0);
@@ -222,8 +232,10 @@ begin  -- architecture rtl
       
       adc_en_o    => adc_en_o,
       adc_clk_o   => adc_clk_o,
-      adc_data_iv => adc_data_iv
+      adc_data_iv => s_adc_data_v
     );
+    
+  s_adc_data_v  <= adc_data_iv when s_test_en = '0' else s_test_data_v;
 
   cmp_xwb_GEM : entity work.xwb_GEM
     PORT MAP (
@@ -241,8 +253,9 @@ begin  -- architecture rtl
       test_state_id_ov  => s_test_state_id
     );
     
-    s_gem_data_v  <= s_data_v when s_test_en = '0' else s_test_data_v;
-    s_gem_valid   <= s_valid  when s_test_en = '0' else s_test_valid;
+    
+    s_gem_data_v  <= s_data_v;
+    s_gem_valid   <= s_valid;
     
     
   
@@ -250,13 +263,13 @@ begin  -- architecture rtl
   -- Debug
   -----------------------------------------------------------------------------
 
-  cmp_vio_0 : entity work.vio_0
-    PORT MAP (
-      clk => s_sys_clk,
-      probe_out0(0) => s_test_en,
-      probe_out1 => s_frequency_v,
-      probe_out2 => s_pulse_width
-    );
+  -- cmp_vio_0 : entity work.vio_0
+    -- PORT MAP (
+      -- clk => s_sys_clk,
+      -- probe_out0(0) => s_test_en,
+      -- probe_out1 => s_frequency_v,
+      -- probe_out2 => s_pulse_width
+    -- );
   
   
   cmp_ila_0 : entity work.ila_0
@@ -273,15 +286,18 @@ begin  -- architecture rtl
     rst_n_i       => s_sys_rst_n,
       
     enable_i        => s_test_en, 
-    frequency_iv    => s_frequency_v,
-    pulse_width_iv  => s_pulse_width, 
+    period_iv       => TEST_1_o.PERIOD,
+    pulse_width_iv  => TEST_1_o.PULSE_WIDHT, 
+    value_iv        => TEST_0_o.VALUE,
     
     test_data_ov  => s_test_data_v,
-    test_valid_o  => s_test_valid
+    test_valid_o  => open
   );
   
+  s_test_en <= TEST_0_o.ENABLE(0);
   
-  
+  -- TEST_0_o.ENABLE;
+  -- TEST_0_o.VALUE;
   
 
 end architecture rtl;

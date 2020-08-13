@@ -1,0 +1,25 @@
+<node id="GEM">
+  <node id="ID" address="0x00000000" permission="r"/>
+  <node id="VER" address="0x00000001" permission="r"/>
+  <node id="CTRL_0" address="0x00000002" permission="rw">
+    <node id="ENABLE" mask="0x00000001"/>
+    <node id="OFFSET" mask="0x00007ffe"/>
+    <node id="THRESHOLD" mask="0x1fff8000"/>
+  </node>
+  <node id="CTRL_1" address="0x00000003" permission="rw">
+    <node id="MIN_PW" mask="0x000000ff"/>
+    <node id="MAX_PW" mask="0x0000ff00"/>
+    <node id="TAIL" mask="0x00ff0000"/>
+  </node>
+  <node id="Error_too_short_cnt" address="0x00000004" permission="r" mask="0x0001ffff"/>
+  <node id="Error_too_long_cnt" address="0x00000005" permission="r" mask="0x0001ffff"/>
+  <node id="Error_negative_value_cnt" address="0x00000006" permission="r" mask="0x0001ffff"/>
+  <node id="Error_hist_bin_over_cnt" address="0x00000007" permission="r" mask="0x0001ffff"/>
+  <node id="Error_overlapping_cnt" address="0x00000008" permission="r" mask="0x0001ffff"/>
+  <node id="CTRL_2" address="0x00000009" permission="rw">
+    <node id="RESET_DPRAM_ADDRESS" mask="0x00000001"/>
+  </node>
+  <node id="BIN_VALUE" address="0x0000000a" permission="r"/>
+  <node id="OFFSET_READOUT" address="0x0000000b" permission="r" mask="0x0000ffff"/>
+  <node id="FSM_STATE" address="0x0000000c" permission="r" mask="0x0000000f"/>
+</node>

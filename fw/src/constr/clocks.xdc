@@ -5,3 +5,4 @@ create_clock -period 50.000 -name spi_sck -waveform {0.000 25.000} [get_ports sp
 #set_false_path -to [get_cells rst_io_0*_reg*]
 
 
+

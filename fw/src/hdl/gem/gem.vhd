@@ -29,6 +29,8 @@ entity gem is
     max_pw_iv       : in std_logic_vector(7 downto 0);
     tail_samp_iv    : in std_logic_vector(7 downto 0);
     
+    offset_readout_ov    : out std_logic_vector(14 downto 0);
+    
     test_state_id_ov  : out std_logic_vector(2 downto 0);
     
     
@@ -66,6 +68,7 @@ architecture rtl of gem is
     offset_val_v      : type_offset_val_v;
     valid_v           : std_logic_vector(7 downto 0);
     
+    offset_readout_v           : std_logic_vector(14 downto 0);
     
     accumulator       : signed(21 downto 0);
     error_too_short_cnt        : unsigned(15 downto 0);
@@ -102,6 +105,7 @@ architecture rtl of gem is
     
     accumulator       => (others => '0'),
     
+    offset_readout_v      => (others => '0'),
     
     
     error_too_short_cnt         => (others => '0'),
@@ -147,12 +151,14 @@ architecture rtl of gem is
   
   attribute MARK_DEBUG : string;
   attribute MARK_DEBUG of r : signal is "TRUE";
-  attribute MARK_DEBUG of s_wea : signal is "TRUE";
-  attribute MARK_DEBUG of s_dina : signal is "TRUE";
-  attribute MARK_DEBUG of s_douta : signal is "TRUE";
+  -- attribute MARK_DEBUG of s_wea : signal is "TRUE";
+  -- attribute MARK_DEBUG of s_dina : signal is "TRUE";
+  -- attribute MARK_DEBUG of s_douta : signal is "TRUE";
   attribute MARK_DEBUG of valid_i : signal is "TRUE";
   attribute MARK_DEBUG of data_iv : signal is "TRUE";
   attribute MARK_DEBUG of enable_i : signal is "TRUE";
+  -- attribute MARK_DEBUG of offset_readout_ov : signal is "TRUE";
+  -- attribute MARK_DEBUG of test_state_id_ov : signal is "TRUE";
 
     
 begin
@@ -205,14 +211,19 @@ begin
         v.valid_v(0) := '1';
         v.valid_v(7 downto 1) := r.valid_v(6 downto 0);
         
-        if (r.acc_en = '1') then
-          v.accumulator := r.accumulator + r.substract_data_v(7);
-        else
-          v.accumulator := (others => '0');
-        end if;
-         
-        
       end if;
+      
+      
+      if (r.acc_en = '1') then
+        if (valid_i = '1') and (enable_i = '1') then
+          v.accumulator := r.accumulator + r.substract_data_v(7);
+        end if;
+      else
+        v.accumulator := (others => '0');
+      end if;
+      
+      
+      
       
       case r.main_fsm is
       
@@ -228,7 +239,8 @@ begin
             v.main_fsm := accumulate;
             v.acc_en := '1';
             
-            --latch up offset -- and do what with it?
+            --latch ADC - Offset, after delay 
+            v.offset_readout_v := std_logic_vector(r.substract_data_v(7));
             
             
           
@@ -341,7 +353,7 @@ begin
       
       
       if (r.save_val = '1') then
-        test_state_id_ov <= std_logic_vector(to_unsigned(3,3)); --not really a stete, but might be useful
+        test_state_id_ov <= std_logic_vector(to_unsigned(3,3)); --not really a state, but might be useful
         
         v.save_val  := '0';
         v.wea       := '1';
@@ -390,6 +402,8 @@ begin
       s_web   <= r.web;
       s_addrb <= r.addrb;
       s_dinb  <= r.dinb;
+      
+      offset_readout_ov <= r.offset_readout_v;
 
       --
       -- Reset.

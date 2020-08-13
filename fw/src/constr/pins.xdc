@@ -68,3 +68,13 @@ set_property CONFIG_VOLTAGE 3.3 [current_design]
 set_property CFGBVS VCCO [current_design]
 
 
+
+
+
+connect_debug_port u_ila_0/probe1 [get_nets [list {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[0]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[1]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[2]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[3]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[4]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[5]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[6]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[7]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[8]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[9]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[10]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[11]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[12]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[13]} {cmp_xwb_GEM/cmp_GEM/offset_readout_ov[14]}]]
+connect_debug_port u_ila_0/probe14 [get_nets [list cmp_xwb_GEM/cmp_GEM/s_wea]]
+
+set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
+set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
+set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
+connect_debug_port dbg_hub/clk [get_nets s_sys_clk]
