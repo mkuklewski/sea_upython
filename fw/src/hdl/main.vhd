@@ -263,13 +263,18 @@ begin  -- architecture rtl
   -- Debug
   -----------------------------------------------------------------------------
 
-  -- cmp_vio_0 : entity work.vio_0
-    -- PORT MAP (
-      -- clk => s_sys_clk,
-      -- probe_out0(0) => s_test_en,
-      -- probe_out1 => s_frequency_v,
-      -- probe_out2 => s_pulse_width
-    -- );
+  cmp_vio_0 : entity work.vio_0
+    PORT MAP (
+      clk => s_sys_clk,
+      probe_in0(0)  => s_test_en,
+      probe_in1     => adc_data_iv,
+      probe_in2     => s_test_data_v,
+      probe_in3     => s_gem_data_v,
+      probe_in4(0)  => s_gem_valid,
+      probe_in5     => TEST_1_o.PERIOD,
+      probe_in6     => TEST_1_o.PULSE_WIDHT,
+      probe_in7     => TEST_0_o.VALUE
+    );
   
   
   cmp_ila_0 : entity work.ila_0
@@ -277,7 +282,8 @@ begin  -- architecture rtl
     clk => s_sys_clk,
 
     probe0 => s_gem_data_v, 
-    probe1 => s_test_state_id
+    probe1(0) => s_gem_valid,
+    probe2 => s_test_state_id
   );
   
   cmp_test_data_gen : entity work.test_data_gen
